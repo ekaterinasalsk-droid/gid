@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Не выгорай. Простая система контента</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=Montserrat:wght@300;400;500;600&family=PT+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- Дизайн-система & Переменные (Bento Style) --- */
+        :root {
+            --bg-body: #E5E3DC; /* Фон веб-вьюера */
+            --bg-page: #F8F7F4; /* Фон самой "бумаги" */
+            
+            /* Палитра плашек */
+            --card-white: #FFFFFF;
+            --card-beige: #F1EEE6;
+            --card-olive-light: #E3E5DA;
+            --card-olive-matte: #748469;
+            --card-dark: #4A5D4E;
+
+            /* Текстовые цвета */
+            --text-dark: #2F3129;
+            --text-muted: #7E8274;
+            --text-light: #F8F7F4;
+            --olive-matte: #6B705C;
+            --olive-light: #A5A58D;
+            
+            --paper-width: 840px;
+            --radius-bento: 15px;
+        }
+
+        /* --- Базовые сбросы --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100%;
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 400;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- Типографика --- */
+        h1, h2, h3, .mono-ui {
+            font-family: 'PT Mono', monospace;
+            font-weight: 400;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+            color: var(--olive-matte);
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            line-height: 1.4;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            color: var(--olive-matte);
+            margin-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+        
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        ul {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.6rem;
+            font-size: 1.05rem;
+        }
+
+        li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--olive-light);
+            font-size: 1.2rem;
+            line-height: 1.4;
+        }
+
+        .strong {
+            font-weight: 600;
+        }
+
+        .handwritten {
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            display: inline-block;
+            line-height: 0.9;
+            font-weight: 500;
+            color: var(--olive-matte);
+        }
+
+        /* Адаптация цвета текста внутри темных плашек */
+        .card-dark, .card-olive-matte {
+            color: var(--text-light);
+        }
+        .card-dark h1, .card-dark h2, .card-dark h3, .card-dark .strong,
+        .card-olive-matte h1, .card-olive-matte h2, .card-olive-matte h3, .card-olive-matte .strong {
+            color: var(--text-light);
+        }
+        .card-dark .handwritten { color: var(--card-olive-light); }
+        .card-olive-matte .handwritten { color: var(--card-beige); }
+        .card-dark li::before, .card-olive-matte li::before { color: var(--olive-light); }
+
+        /* --- Bento Grid Сетка --- */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        .bento-card {
+            border-radius: var(--radius-bento);
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Размеры карточек (Col Spans) */
+        .span-12 { grid-column: span 12; }
+        .span-8  { grid-column: span 8; }
+        .span-7  { grid-column: span 7; }
+        .span-6  { grid-column: span 6; }
+        .span-5  { grid-column: span 5; }
+        .span-4  { grid-column: span 4; }
+
+        /* Цвета карточек */
+        .bg-white { background-color: var(--card-white); border: 1px solid rgba(0,0,0,0.03); }
+        .bg-beige { background-color: var(--card-beige); }
+        .bg-olive-light { background-color: var(--card-olive-light); }
+        .bg-olive-matte { background-color: var(--card-olive-matte); }
+        .bg-dark { background-color: var(--card-dark); }
+        .bg-transparent { background-color: transparent; box-shadow: none; padding: 10px 0; border-radius: 0; }
+
+        /* --- Вертикальная структура страниц --- */
+        .document-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            gap: 40px;
+        }
+
+        .page {
+            position: relative;
+            background-color: var(--bg-page);
+            width: 100%;
+            max-width: var(--paper-width);
+            min-height: 1000px;
+            padding: 90px 60px 80px 60px; /* Вернули отступы для колонтитулов */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            display: start
+              ;
+            flex-direction: column;
+        }
+
+        /* --- Колонтитулы (Пагинация и Вотермарк) --- */
+        .page-number {
+            position: absolute;
+            top: 40px;
+            left: 60px;
+            font-family: 'PT Mono', monospace;
+            font-size: 1rem;
+            color: var(--olive-light);
+        }
+
+        .watermark {
+            position: absolute;
+            bottom: 35px;
+            right: 60px;
+            font-family: 'PT Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--olive-matte);
+            text-decoration: none;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            transition: opacity 0.3s ease, color 0.3s ease;
+        }
+
+        .watermark:hover {
+            opacity: 1;
+            color: var(--text-dark);
+        }
+
+        /* --- Адаптивность --- */
+        @media (max-width: 768px) {
+            .document-wrapper { padding: 15px; gap: 20px; }
+            .page { min-height: auto; padding: 70px 20px 60px 20px; }
+            .bento-grid { display: flex; flex-direction: column; gap: 15px; }
+            h1 { font-size: 1.8rem; }
+            .bento-card { padding: 24px; border-radius: 20px; }
+            .page-number { top: 25px; left: 25px; }
+            .watermark { bottom: 20px; right: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="document-wrapper">
+
+        <div class="page">
+            <div class="bento-grid" style="align-items: stretch;">
+                <div class="bento-card bg-transparent span-12" style="justify-content: flex-center;">
+                    <div class="mono-ui" style="text-transform: uppercase; letter-spacing: 2px; color: var(--olive-light);">Гайд</div>
+                </div>
+                
+                <div class="bento-card bg-beige span-12" style="padding: 60px 40px;">
+                    <h1 style="font-size: 3rem; margin-bottom: 0;">Не выгорай<br>
+ <span class="handwritten" style="font-size: 2.5rem; margin-top: 15px;">Простая система контента</h1>
+                </div>
+
+                <div class="bento-card bg-olive-matte card-olive-matte span-7">
+                    <p class="mono-ui" style="font-size: 1.2rem; margin: 0; line-height: 1.4;">
+                        Когда больше не хочется каждый день думать:<br>
+                        <span class="handwritten" style="font-size: 2.5rem; margin-top: 15px;">«что писать?»</span>
+                    </p>
+                </div>
+                
+                <div class="bento-card bg-olive-light span-5" style="align-items: center; justify-content: center; text-align: center;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--olive-matte)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="m5 12 7 7 7-7"/></svg>
+                </div>
+            </div>
+            <a href="https://kontentai.taplink.ws" target="_blank" class="watermark">Kontent_a_i</a>
+        </div>
+
+        <div class="page">
+            <div class="page-number">2/8</div>
+            <div class="bento-grid">
+                
+                <div class="bento-card bg-transparent span-12">
+                    <h2>Концепция</h2>
+                </div>
+
+                <div class="bento-card bg-white span-12">
+                    <p style="font-size: 1.3rem;">Этот гайд — <span class="strong">не про идеальный блог.</span></p>
+                    <p>Не про контент-машину. И не про то, как постить 24/7.</p>
+                </div>
+                
+                <div class="bento-card bg-beige span-6">
+                    <h3>Он для тех, кто:</h3>
+                    <ul style="margin: 0;">
+                        <li>устал постоянно что-то придумывать</li>
+                        <li>чувствует давление</p>от контента</li>
+                        <li>хочет вести блог легче</li>
+                        <li>но не хочет превращаться<br>в <span class="strong">«генератор пользы»</span></li>
+                    </ul>
+                </div>
+
+                <div class="bento-card bg-dark card-dark span-6">
+                    <h3 style="color: var(--olive-dark);">Важно</h3>
+                    <p>Тебе не нужно создавать контент из пустоты каждый день.</p>
+                    <p style="margin-top: 10px;">Нужно научиться <span class="handwritten">замечать идеи</span> в своей жизни и работе.</p>
+                </div>
+
+            </div>
+            <a href="https://kontentai.taplink.ws" target="_blank" class="watermark">Kontent_a_i</a>
+        </div>
+
+        <div class="page">
+            <div class="page-number">3/8</div>
+            <div class="bento-grid">
+                
+                <div class="bento-card bg-transparent span-12">
+                    <h2>Почему ты устаешь от контента</h2>
+                </div>
+
+                <div class="bento-card bg-white span-6">
+                    <h3>1. Ты устаешь<br>от напряжения</h3>
+                    <p>Кажется, будто нужно все время быть: интересным, полезным, умным, активным, «в ресурсе».</p>
+                    <p>И в какой-то момент блог начинает ощущаться как еще одна работа без выходных.</p>
+                </div>
+
+                <div class="bento-card bg-beige span-6">
+                    <h3>2. Ты пытаешься его придумать</h3>
+                    <p>Самый тяжелый вопрос: <span class="handwritten">«Что бы выложить?»</span></p>
+                    <p>Хорошие тексты появляются из: разговоров, мыслей, раздражения, наблюдений, ошибок, инсайтов.</p>
+                    <p class="strong" style="margin-top: 10px;">Контент уже есть вокруг тебя.</p>
+                </div>
+
+                <div class="bento-card bg-olive-light span-6">
+                    <h3>3. Каждый пост не должен быть важным</h3>
+                    <p>Когда каждый текст должен быть умным, глубоким, продающим — мозг начинает сопротивляться.</p>
+                    <p>Иногда хороший пост — это <span class="handwritten" style="color: var(--olive-matte);">просто честная мысль</span>.</p>
+                </div>
+
+                <div class="bento-card bg-white span-6">
+                    <h3>4. Регулярность — это<br>не сила воли</h3>
+                    <p>Тебе не нужна жесткая дисциплина.</p>
+                    <p>Тебе нужна система, в которой не приходится каждый день принимать миллион решений.</p>
+                </div>
+
+            </div>
+            <a href="https://kontentai.taplink.ws" target="_blank" class="watermark">Kontent_a_i</a>
+        </div>
+
+        <div class="page">
+            <div class="page-number">4/8</div>
+            <div class="bento-grid">
+                
+                <div class="bento-card bg-transparent span-12">
+                    <h2>5 типов контента</h2>
+                    <p style="color: var(--text-muted);">которые снимают вопрос «о чем писать»</p>
+                </div>
+
+                <div class="bento-card bg-white span-6">
+                    <h3>1. Наблюдение</h3>
+                    <p>Просто расскажи, что ты начал замечать (в клиентах, в себе,<br>в работе). Это не требует «гениальности», но делает блог живым.</p>
+                </div>
+
+                <div class="bento-card bg-beige span-6">
+                    <h3>2. Разбор</h3>
+                    <p>Разбери ошибку, ситуацию, чужой подход, тренд, свой кейс. Людям нравится видеть, как ты думаешь.</p>
+                </div>
+
+                <div class="bento-card bg-olive-matte card-olive-matte span-12" style="flex-direction: row; align-items: center; gap: 20px;">
+                    <div style="flex: 1;">
+                        <h3>3. Процесс</h3>
+                        <p>Покажи внутрянку. Не только результат, а как ты работаешь<br>и принимаешь решения. Это создает доверие сильнее,<br>чем <span class="strong">«успешный успех»</span>.</p>
+                    </div>
+                </div>
+
+                <div class="bento-card bg-white span-6">
+                    <h3>4. Позиция</h3>
+                    <p>С чем ты не согласен? Спокойно и честно.<br>Например: почему постоянная продуктивность — ловушка. Именно позицию запоминают.</p>
+                </div>
+
+                <div class="bento-card bg-olive-light span-6">
+                    <h3>5. Замедление</h3>
+                    <p>Иногда не нужно учить. Можно просто поделиться усталостью, переосмыслением. Люди устали от «пользы», им хочется <span class="handwritten">настоящего</span>.</p>
+                </div>
+
+            </div>
+            <a href="https://kontentai.taplink.ws" target="_blank" class="watermark">Kontent_a_i</a>
+        </div>
+
+        <div class="page">
+            <div class="page-number">5/8</div>
+            <div class="bento-grid">
+                
+                <div class="bento-card bg-transparent span-12">
+                    <h2>Как находить темы</h2>
+                    <p style="color: var(--text-muted);">даже когда кажется, что писать не о чем</p>
+                </div>
+
+                <div class="bento-card bg-beige span-6">
+                    <div class="mono-ui" style="color: var(--olive-light); font-size: 0.9rem; margin-bottom: 5px;">Источник №1</div>
+                    <h3>Частые вопросы</h3>
+                    <p>Если люди спрашивают одно<br>и то же — это готовая тема. Даже если тебе кажется: «Ну это же очевидно». Для тебя — да, для них — нет.</p>
+                </div>
+
+                <div class="bento-card bg-dark card-dark span-6">
+                    <div class="mono-ui" style="color: var(--olive-matte); font-size: 0.9rem; margin-bottom: 5px;">Источник №2</div>
+                    <h3>То, что раздражает</h3>
+                    <p>Раздражение показывает то, что тебе важно. Что в нише кажется тебе поверхностным или фальшивым? Там много сильных тем.</p>
+                </div>
+
+                <div class="bento-card bg-white span-6">
+                    <div class="mono-ui" style="color: var(--olive-light); font-size: 0.9rem; margin-bottom: 5px;">Источник №3</div>
+                    <h3>Ошибки клиентов</h3>
+                    <p>Самый полезный контент рождается из повторяющихся проблем. Что люди делают снова: усложняют, боятся, откладывают?</p>
+                </div>
+
+                <div class="bento-card bg-olive-light span-6">
+                    <div class="mono-ui" style="color: var(--olive-matte); font-size: 0.9rem; margin-bottom: 5px;">Источник №4</div>
+                    <h3>Изменения в тебе</h3>
+                    <p>Если твое мнение о чем-то изменилось — это почти всегда хороший пост. Людям интересно наблюдать<br>за <span class="handwritten">человеком</span>.</p>
+                </div>
+
+            </div>
+            <a href="https://kontentai.taplink.ws" target="_blank" class="watermark">Kontent_a_i</a>
+        </div>
+
+        <div class="page">
+            <div class="page-number">6/8</div>
+            <div class="bento-grid">
+                
+                <div class="bento-card bg-transparent span-12">
+                    <h2>Спокойный план на неделю</h2>
+                    <p style="color: var(--text-muted);">Чтобы не сидеть с мыслью: <span class="handwritten" style="color: var(--olive-matte); font-size: 1.4rem;">«Боже, что выкладывать?»</span></p>
+                </div>
+
+                <div class="bento-card bg-white span-12">
+                    <ul style="margin: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                        <li><span class="strong">ПН — Наблюдение.</span><br>Что ты заметил за последнее время?</li>
+                        <li><span class="strong">ВТ — Разбор.</span><br>Ошибка, кейс, ситуация, тренд.</li>
+                        <li><span class="strong">СР — Процесс.</span><br>Покажи свою работу изнутри.</li>
+                        <li><span class="strong">ЧТ — Позиция.</span><br>С чем ты не согласен?</li>
+                        <li style="grid-column: span 2;"><span class="strong">ПТ — Замедление.</span> Личный вывод недели. Без попытки впечатлить.</li>
+                    </ul>
+                </div>
+
+                <div class="bento-card bg-olive-matte card-olive-matte span-12">
+                    <h3 style="color: var(--card-beige);">Почему это работает</h3>
+                    <p>Потому что тебе больше не нужно каждый день придумывать новый формат, вытаскивать идеи из пустоты и заставлять себя «быть креативным».</p>
+                    <p class="strong" style="margin-top: 10px; font-size: 1.2rem;">Появляется ощущение опоры.</p>
+                </div>
+
+            </div>
+            <a href="https://kontentai.taplink.ws" target="_blank" class="watermark">Kontent_a_i</a>
+        </div>
+
+        <div class="page">
+            <div class="page-number">7/8</div>
+            <div class="bento-grid">
+                
+                <div class="bento-card bg-transparent span-12">
+                    <h2>ИИ как помощник</h2>
+                    <p style="color: var(--text-muted);">ИИ — это не замена тебе. Его задача — быстрее оформлять мысли.</p>
+                </div>
+
+                <div class="bento-card bg-beige span-6">
+                    <h3 style="color: #9C6B6B;">Что лучше не делать</h3>
+                    <p>Не проси: <span class="strong">«Напиши пост про…»</span></p>
+                    <p>Чаще всего получится что-то очень общее, шаблонное<br>и неживое.</p>
+                </div>
+
+                <div class="bento-card bg-white span-6">
+                    <h3 style="color: var(--olive-matte);">Что работает лучше</h3>
+                    <p>Выгрузи мысль голосом или хаотичным текстом.</p>
+                    <p>Попроси ИИ: найти суть, убрать лишнее, усилить примеры<br>и <span class="strong">сохранить твой стиль</span>.</p>
+                </div>
+
+                <div class="bento-card bg-dark card-dark span-12">
+                    <h3 style="color: var(--olive-light);">Самое важное</h3>
+                    <p style="font-size: 1.15rem;">Если текст можно написать без твоего опыта — он не запомнится.</p>
+                    <p>Люди приходят не за идеальными формулировками. Они приходят<br>за <span class="handwritten">живым мышлением</span>.</p>
+                </div>
+
+            </div>
+            <a href="https://kontentai.taplink.ws" target="_blank" class="watermark">Kontent_a_i</a>
+        </div>
+
+        <div class="page">
+            <div class="page-number">8/8</div>
+            <div class="bento-grid">
+                
+                <div class="bento-card bg-transparent span-12">
+                    <h2>Главное из этого гайда</h2>
+                </div>
+                <div class="bento-card bg-white span-6">
+                    <h3 style="margin-bottom: 15px;">Тебе абсолютно не нужно:</h3>
+                    <ul style="margin: 0;">
+                        <li>быть контент-машиной</li>
+                        <li>постоянно вдохновляться</li>
+                        <li>писать идеально</li>
+                        <li>выдавать пользу<br>каждый день</li>
+                    </ul>
+                </div>
+
+                <div class="bento-card bg-beige span-6" style="justify-content: center;">
+                    <p style="font-size: 1.5rem; line-height: 1.6; margin: 0; color: var(--olive-matte);">
+                        Блог может быть спокойным.<br>
+                        Глубоким.<br>
+                        <span class="handwritten" style="font-size: 3rem; margin-top: 10px;">Человечным.</span>
+                    </p>
+                </div>
+
+                <div class="bento-card bg-olive-light span-12" style="text-align: center; padding: 40px;">
+                    <p style="font-size: 1.25rem; font-weight: 500; margin: 0; color: var(--text-dark);">
+                        И именно такой контент сейчас цепляет сильнее всего.
+                    </p>
+                </div>
+
+            </div>
+            <a href="https://kontentai.taplink.ws" target="_blank" class="watermark">Kontent_a_i</a>
+        </div>
+
+    </div>
+</body>
+</html>
