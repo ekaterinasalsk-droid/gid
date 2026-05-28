@@ -228,6 +228,92 @@
             .page-number { top: 25px; left: 25px; }
             .watermark { bottom: 20px; right: 25px; }
         }
+
+        /* ==========================================================================
+           ГЛУБОКАЯ PDF-АДАПТАЦИЯ И НАСТРОЙКА ПЕЧАТИ СТРОГО А4
+           ========================================================================== */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0; /* Полное подавление стандартных браузерных полей */
+            }
+
+            html, body {
+                width: 210mm;
+                height: 297mm;
+                background-color: #F4F1EA !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                overflow: visible !important;
+                display: block !important;
+            }
+
+            /* Скрываем интерактивный свет и панели управления */
+            .ambient-light, 
+            .controls-panel {
+                display: none !important;
+            }
+
+            .guide-viewport {
+                width: 210mm !important;
+                height: auto !important;
+                max-width: none !important;
+                padding: 0 !important;
+                display: block !important;
+            }
+
+            .slides-wrapper {
+                overflow: visible !important;
+                display: block !important;
+                height: auto !important;
+            }
+
+            /* Разворачиваем все слайды в последовательные страницы A4 */
+            .slide {
+                position: relative !important;
+                display: block !important;
+                width: 210mm !important;
+                height: 297mm !important;
+                max-height: 297mm !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                transform: none !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                padding: 30mm 25mm 30mm 25mm !important; /* Идеальные книжные поля внутри контейнера */
+                box-sizing: border-box !important;
+                background-color: #F4F1EA !important;
+                overflow: hidden !important;
+            }
+
+            /* Защита от разрывов блоков текста */
+            p, h2, h3, ul {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            /* Обложка при печати центрируется вертикально */
+            .slide.cover {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: flex-start !important;
+            }
+
+            /* Кликабельный текст дублируется абсолютно в углу каждого листа A4 */
+            .brand-watermark {
+                position: absolute !important;
+                bottom: 20mm !important;
+                right: 25mm !important;
+                display: block !important;
+                font-size: 10pt !important;
+                color: #6B705C !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    
     </style>
 </head>
 <body>
